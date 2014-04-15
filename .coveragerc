@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = kiteclient
+omit = kiteclient/tests/*,kiteclient/openstack/*
+
+[report]
+ignore-errors = True

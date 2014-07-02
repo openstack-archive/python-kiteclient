@@ -12,6 +12,8 @@
 
 import base64
 
+import six
+
 from kiteclient.openstack.common.crypto import utils as cryptoutils
 from kiteclient.openstack.common import jsonutils
 from kiteclient.openstack.common import timeutils
@@ -29,7 +31,7 @@ class Esek(object):
                                  data['timestamp'])
 
         crypto = cryptoutils.HKDF(hashtype=hashtype)
-        key_data = crypto.expand(base_key, key_info, key_size * 2)
+        key_data = crypto.expand(base_key, six.b(key_info), key_size * 2)
 
         self.sig_key = key_data[:key_size]
         self.enc_key = key_data[key_size:]

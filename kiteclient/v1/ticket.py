@@ -14,6 +14,7 @@ import base64
 import struct
 
 from Crypto import Random
+import six
 
 from kiteclient.common import resource
 from kiteclient.openstack.common.crypto import utils as cryptoutils
@@ -40,7 +41,8 @@ class _Metadata(object):
                 'nonce': self.nonce}
 
     def encode(self):
-        return base64.b64encode(jsonutils.dumps(self.get_data()))
+        data = self.get_data()
+        return base64.b64encode(six.b(jsonutils.dumps(data)))
 
 
 class Ticket(resource.Resource):
@@ -74,13 +76,17 @@ class Ticket(resource.Resource):
         b64_ticket = resp['ticket']
         b64_signature = resp['signature']
 
-        sig = self.source.sign(b64_metadata + b64_ticket, b64encode=True)
+        sig = self.source.sign(six.b(b64_metadata + b64_ticket),
+                               b64encode=True)
 
-        if sig != b64_signature:
+        if sig != six.b(b64_signature):
             raise ValueError("invalid signature on ticket")
 
         data = self.source.decrypt(b64_ticket, b64decode=True)
         self._ticket = jsonutils.loads(data)
+        self._ticket['skey'] = six.b(self._ticket['skey'])
+        self._ticket['ekey'] = six.b(self._ticket['ekey'])
+        self._ticket['esek'] = six.b(self._ticket['esek'])
         self._metadata = jsonutils.loads(base64.b64decode(b64_metadata))
 
     def __repr__(self):

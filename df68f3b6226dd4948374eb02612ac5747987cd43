@@ -1,0 +1,10 @@
+Verified+2: Jenkins
+Code-Review+2: Jarret Raim <jarret.raim@rackspace.com>
+Workflow+1: John Wood <john.wood@rackspace.com>
+Code-Review+2: Douglas Mendizábal <douglas.mendizabal@rackspace.com>
+Code-Review+1: Tim Kelsey <tim.kelsey@hp.com>
+Submitted-by: Jenkins
+Submitted-at: Tue, 08 Jul 2014 21:33:43 +0000
+Reviewed-on: https://review.openstack.org/102759
+Project: stackforge/python-kiteclient
+Branch: refs/heads/master

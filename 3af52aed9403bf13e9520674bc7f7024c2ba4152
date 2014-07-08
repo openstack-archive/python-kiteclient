@@ -1,0 +1,12 @@
+Verified+2: Jenkins
+Code-Review+1: Chad Lung <chad.lung@gmail.com>
+Code-Review+2: Jarret Raim <jarret.raim@rackspace.com>
+Code-Review+2: John Wood <john.wood@rackspace.com>
+Workflow+1: Lisa Clark <lisa.clark@rackspace.com>
+Code-Review+1: Juan Antonio Osorio Robles <juan.osorio.robles@ericsson.com>
+Code-Review+1: Tim Kelsey <tim.kelsey@hp.com>
+Submitted-by: Jenkins
+Submitted-at: Tue, 08 Jul 2014 22:21:47 +0000
+Reviewed-on: https://review.openstack.org/102760
+Project: stackforge/python-kiteclient
+Branch: refs/heads/master

@@ -100,6 +100,10 @@ class Ticket(resource.Resource):
         return '<Ticket %s %s>' % (base, ticket)
 
     @property
+    def expiration(self):
+        return self._metadata["expiration"]
+
+    @property
     def b64_skey(self):
         return self._ticket['skey']
 

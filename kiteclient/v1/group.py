@@ -20,22 +20,31 @@ from kiteclient.openstack.common.crypto import utils as cryptoutils
 from kiteclient.openstack.common import jsonutils
 
 
-class Ticket(resource.Resource):
+class GroupKey(resource.Resource):
 
-    base_path = 'tickets'
+    base_path = 'groups'
 
     def __init__(self, source, destination, timestamp=None, nonce=None,
                  session=None):
+        self._group_key = None
         self.source = source
         self._destination = destination
         self._timestamp = timestamp
-        self._nonce = nonce
-
-        self._ticket = None
         self._metadata = None
+        self._nonce = nonce
 
         if session:
             self.create(session)
+
+    def __repr__(self):
+        base = 'src:  "{0}", dst: "{1}"'.format(self.source.name,
+                                                self._destination)
+
+        group_key = 'Not yet created'
+        if self._group_key is not None:
+            group_key = self.b64_key
+
+        return '<GroupKey {0} {1}>'.format(base, group_key)
 
     def create(self, session):
         b64_metadata = meta_data.Metadata(self.source.name,
@@ -50,60 +59,51 @@ class Ticket(resource.Resource):
         resp = self._http_post(session, json=json).json()
 
         b64_metadata = resp['metadata']
-        b64_ticket = resp['ticket']
+        b64_group_key = resp['group_key']
         b64_signature = resp['signature']
 
-        sig = self.source.sign(six.b(b64_metadata + b64_ticket),
+        sig = self.source.sign(six.b(b64_metadata + b64_group_key),
                                b64encode=True)
 
         if sig != six.b(b64_signature):
-            raise ValueError("invalid signature on ticket")
+            raise ValueError("invalid signature on group key")
 
-        data = self.source.decrypt(b64_ticket, b64decode=True)
-        self._ticket = jsonutils.loads(data)
-        self._ticket['skey'] = six.b(self._ticket['skey'])
-        self._ticket['ekey'] = six.b(self._ticket['ekey'])
-        self._ticket['esek'] = six.b(self._ticket['esek'])
+        group_key = self.source.decrypt(b64_group_key, b64decode=True)
+        self._group_key = base64.b64encode(group_key)
         self._metadata = jsonutils.loads(base64.b64decode(b64_metadata))
 
-    def __repr__(self):
-        base = 'src: "%s", dst: "%s"' % (self.source.name, self._destination)
-
-        if self._ticket:
-            ticket = 'skey: "%s", ekey: "%s"' % (self.b64_skey, self.b64_ekey)
-        else:
-            ticket = 'Not yet created'
-
-        return '<Ticket %s %s>' % (base, ticket)
+    @property
+    def b64_key(self):
+        return self._group_key
 
     @property
-    def b64_skey(self):
-        return self._ticket['skey']
-
-    @property
-    def skey(self):
-        return base64.b64decode(self.b64_skey)
-
-    @property
-    def b64_ekey(self):
-        return self._ticket['ekey']
-
-    @property
-    def ekey(self):
-        return base64.b64decode(self.b64_ekey)
-
-    @property
-    def b64_esek(self):
-        return self._ticket['esek']
-
-    @property
-    def esek(self):
-        return base64.b64decode(self.b64_esek)
+    def key(self):
+        return base64.b64decode(self._group_key)
 
     def encrypt(self, data, enctype='AES', hashtype='SHA256', b64encode=True):
         crypto = cryptoutils.SymmetricCrypto(enctype=enctype,
                                              hashtype=hashtype)
 
-        enc = crypto.encrypt(self.ekey, data, b64encode=b64encode)
-        sig = crypto.sign(self.skey, data, b64encode=b64encode)
-        return enc, sig
+        enc = crypto.encrypt(self.key, data, b64encode=b64encode)
+        # TODO(tim.kelsey): add a signing key.
+        # sig = crypto.sign(self.skey, data, b64encode=b64encode)
+        return enc  # , sig
+
+
+class Group(resource.Resource):
+
+    base_path = 'groups'
+
+    def __init__(self, name, session=None):
+        self.name = name
+        if session:
+            self.create(session)
+
+    def create(self, session):
+        resp = self._http_put(session, self.name).json()
+
+        if resp['name'] != self.name:
+            raise ValueError('Name was changed in response')
+
+    def getKey(self, source, session):
+        return GroupKey(source, self.name, session=session)

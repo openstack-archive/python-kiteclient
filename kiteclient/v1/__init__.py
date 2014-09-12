@@ -12,6 +12,7 @@
 
 
 from kiteclient.v1.esek import Esek
+from kiteclient.v1.group import Group
 from kiteclient.v1.key import Key
 from kiteclient.v1.ticket import Ticket
 
@@ -19,4 +20,5 @@ from kiteclient.v1.ticket import Ticket
 __all__ = ['Esek',
            'Key',
            'Ticket',
+           'Group',
            ]

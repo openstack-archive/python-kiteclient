@@ -39,4 +39,31 @@ class DummyTicketResponse(object):
     def json(self):
         return {"signature": self.signature,
                 "metadata": self.metadata,
-                "ticket" : self.ticket}
+                "ticket": self.ticket}
+
+
+class DummyGroupResponse(object):
+    def __init__(self, name):
+        self.name = name
+
+    def request(self, path, method, **kwargs):
+        return self
+
+    def json(self):
+        return {"name": self.name}
+
+
+class DummyGroupKeyResponse(object):
+
+    def __init__(self, signature, metadata, group_key):
+        self.signature = signature
+        self.metadata = metadata
+        self.group_key = group_key
+
+    def request(self, path, method, **kwargs):
+        return self
+
+    def json(self):
+        return {"signature": self.signature,
+                "metadata": self.metadata,
+                "group_key": self.group_key}

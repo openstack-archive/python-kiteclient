@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Code-Review+2: John Vrbanac <john.vrbanac@rackspace.com>
+Code-Review+2: John Wood <john.wood@rackspace.com>
+Workflow+1: Douglas Mendizábal <douglas.mendizabal@rackspace.com>
+Submitted-by: Jenkins
+Submitted-at: Tue, 09 Dec 2014 13:58:27 +0000
+Reviewed-on: https://review.openstack.org/139378
+Project: openstack/python-kiteclient
+Branch: refs/heads/master

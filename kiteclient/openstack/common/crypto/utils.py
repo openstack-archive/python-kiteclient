@@ -12,14 +12,27 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+########################################################################
+#
+# THIS MODULE IS DEPRECATED
+#
+# Please refer to
+# https://etherpad.openstack.org/p/kilo-kiteclient-library-proposals for
+# the discussion leading to this deprecation.
+#
+# We recommend checking out Barbican or the cryptography.py project
+# (https://pypi.python.org/pypi/cryptography) instead of this module.
+#
+########################################################################
+
 import base64
 
 from Crypto.Hash import HMAC
 from Crypto import Random
+from oslo_utils import importutils
 import six
 
-from kiteclient.openstack.common.gettextutils import _
-from kiteclient.openstack.common import importutils
+from kiteclient.openstack.common._i18n import _
 
 bchr = six.int2byte
 
